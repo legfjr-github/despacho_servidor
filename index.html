@@ -543,12 +543,24 @@
             }
 
             const preview = document.getElementById('preview-content');
-            const text = preview.innerText;
+
             try {
-                await navigator.clipboard.writeText(text);
+                // Seleciona o conteúdo do preview
+                const range = document.createRange();
+                range.selectNode(preview);
+                const selection = window.getSelection();
+                selection.removeAllRanges();
+                selection.addRange(range);
+
+                // Executa o comando de cópia (modo compatível para rich text)
+                document.execCommand('copy');
+
+                // Limpa a seleção
+                selection.removeAllRanges();
+
                 const btn = document.querySelector('.btn-copy');
                 const originalText = btn.innerHTML;
-                btn.innerHTML = "OFÍCIO COPIADO!";
+                btn.innerHTML = "OFÍCIO COPIADO COM FORMATAÇÃO!";
                 btn.style.backgroundColor = "#28a745";
                 setTimeout(() => {
                     btn.innerHTML = originalText;
