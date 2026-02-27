@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador de Ofício de Férias (Chefia) - PROGEPE UFPE</title>
+    <style>
+        :root {
+            --ufpe-blue: #003b71;
+            --ufpe-red: #780C18;
+            --ufpe-light-blue: #f0f4f8;
+            --text-dark: #333;
+            --white: #ffffff;
+            --gray-light: #f4f6f9;
+            --gray-border: #e0e0e0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #eef2f5;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 950px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: var(--white);
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-header {
+            background: white;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            border-bottom: 4px solid var(--ufpe-red);
+        }
+
+        .card-logo {
+            width: 50px;
+            height: auto;
+            margin-right: 15px;
+        }
+
+        .header-text h1 {
+            color: #555;
+            font-size: 1.2rem;
+            margin: 0;
+            font-weight: 800;
+        }
+
+        .header-text h2 {
+            font-size: 1rem;
+            margin: 0;
+            font-weight: 600;
+            color: var(--ufpe-red);
+        }
+
+        .banner {
+            background-color: var(--ufpe-red);
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .content {
+            padding: 20px;
+            flex-grow: 1;
+        }
+
+        .form-section {
+            margin-bottom: 25px;
+            border: 1px solid var(--gray-border);
+            padding: 15px;
+            border-radius: 8px;
+            background: var(--white);
+        }
+
+        .section-title {
+            font-size: 1rem;
+            font-weight: bold;
+            color: var(--ufpe-blue);
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: var(--ufpe-blue);
+            font-size: 0.9rem;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--gray-border);
+            border-radius: 4px;
+            font-size: 0.95rem;
+            box-sizing: border-box;
+        }
+
+        .parcel-row {
+            display: grid;
+            grid-template-columns: 40px 1fr 1fr 60px 40px;
+            gap: 10px;
+            align-items: flex-end;
+            margin-bottom: 10px;
+            padding: 10px;
+            background: var(--gray-light);
+            border-radius: 4px;
+            animation: fadeIn 0.3s forwards;
+        }
+
+        /* Preview Area */
+        .preview-container {
+            position: sticky;
+            top: 20px;
+        }
+
+        .preview-header {
+            background-color: var(--ufpe-blue);
+            color: white;
+            padding: 12px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        #preview-content {
+            background: white;
+            padding: 30px;
+            border: 1px solid var(--gray-border);
+            min-height: 500px;
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 12pt;
+            line-height: 1.5;
+            color: #000;
+            white-space: pre-wrap;
+            overflow-y: auto;
+            max-height: 80vh;
+        }
+
+        .btn-copy {
+            background-color: var(--ufpe-blue);
+            color: white;
+            border: none;
+            padding: 15px;
+            width: 100%;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-copy:hover {
+            background-color: #002a52;
+        }
+
+        .btn-add {
+            background: var(--ufpe-blue);
+            color: white;
+            border: none;
+            padding: 5px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .btn-remove {
+            background: var(--ufpe-red);
+            color: white;
+            border: none;
+            padding: 5px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .total-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            background: var(--ufpe-blue);
+            color: white;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .status-badge {
+            font-size: 0.75rem;
+            margin-left: 10px;
+            font-weight: normal;
+        }
+
+        .status-ok {
+            color: #28a745;
+        }
+
+        .status-error {
+            color: var(--ufpe-red);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .footer-strip {
+            background-color: var(--ufpe-blue);
+            color: white;
+            text-align: center;
+            font-size: 0.75rem;
+            padding: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- SEÇÃO DE CONFIGURAÇÃO -->
+        <div class="card">
+            <div class="card-header">
+                <img src="UFPELOGO.png" alt="Logo UFPE" class="card-logo">
+                <div class="header-text">
+                    <h1>UFPE</h1>
+                    <h2>PROGEPE</h2>
+                </div>
+            </div>
+            <div class="banner">Gerador de Ofício de Férias (Chefia)</div>
+            <div class="content">
+
+                <div class="form-section">
+                    <div class="section-title">Dados do Servidor</div>
+                    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 10px;">
+                        <div class="form-group">
+                            <label for="input-nome">Nome do Servidor:</label>
+                            <input type="text" id="input-nome" placeholder="Digite o nome do servidor"
+                                oninput="updatePreview()">
+                        </div>
+                        <div class="form-group">
+                            <label for="input-siape">SIAPE:</label>
+                            <input type="text" id="input-siape" placeholder="0000000" oninput="updatePreview()">
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                        <div class="form-group">
+                            <label for="input-exercicio">Exercício das Férias:</label>
+                            <input type="text" id="input-exercicio" placeholder="Ex: 2024" oninput="updatePreview()">
+                        </div>
+                        <div class="form-group">
+                            <label for="select-tipo">Natureza do Ofício:</label>
+                            <select id="select-tipo" onchange="updatePreview()">
+                                <option value="alteracao">Alteração de Programação</option>
+                                <option value="cancelamento">Cancelamento de Parcela</option>
+                                <option value="interrupcao">Interrupção por Necessidade</option>
+                                <option value="inclusao">Inclusão Especial</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="input-motivo">Motivo (Justificativa):</label>
+                        <textarea id="input-motivo" rows="2"
+                            placeholder="Ex: Necessidade do serviço / Interesse da Administração"
+                            oninput="updatePreview()"></textarea>
+                    </div>
+                </div>
+
+                <!-- PROGRAMAÇÃO ORIGINAL -->
+                <div class="form-section">
+                    <div class="section-title">
+                        Programação Original (SIGRH)
+                        <span id="total-orig" class="total-badge">Total: 0 dias</span>
+                    </div>
+                    <div id="parcels-orig">
+                        <!-- Gerado via JS -->
+                    </div>
+                    <button class="btn-add" onclick="addParcel('orig')">+ Adicionar Parcela</button>
+                </div>
+
+                <!-- PROGRAMAÇÃO DESEJADA -->
+                <div class="form-section">
+                    <div class="section-title">
+                        Nova Programação Pretendida
+                        <span>
+                            <span id="total-nova" class="total-badge">Total: 0 dias</span>
+                            <span id="status-soma" class="status-badge"></span>
+                        </span>
+                    </div>
+                    <div id="parcels-nova">
+                        <!-- Gerado via JS -->
+                    </div>
+                    <button class="btn-add" onclick="addParcel('nova')">+ Adicionar Parcela</button>
+                </div>
+
+            </div>
+            <div class="footer-strip">SISTEMA DE APOIO À CHEFIA - PROGEPE UFPE</div>
+        </div>
+
+        <!-- SEÇÃO DE PREVIEW -->
+        <div class="preview-container">
+            <div class="card">
+                <div class="preview-header">PRÉ-VISUALIZAÇÃO DO OFÍCIO</div>
+                <div id="preview-content">O texto do Ofício aparecerá aqui...</div>
+                <button class="btn-copy" onclick="copyToClipboard()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+                        <path
+                            d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" />
+                    </svg>
+                    COPIAR OFÍCIO FORMATADO
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let parcelsOrig = [{ start: '', end: '', days: '' }];
+        let parcelsNova = [{ start: '', end: '', days: '' }];
+        let sumConfirmed = false;
+
+        function addParcel(type) {
+            const list = type === 'orig' ? parcelsOrig : parcelsNova;
+            if (list.length < 3) {
+                list.push({ start: '', end: '', days: '' });
+                renderParcels();
+                updatePreview();
+            }
+        }
+
+        function removeParcel(type, index) {
+            const list = type === 'orig' ? parcelsOrig : parcelsNova;
+            if (list.length > 1) {
+                list.splice(index, 1);
+                renderParcels();
+                updatePreview();
+            }
+        }
+
+        function maskDate(input) {
+            let value = input.value.replace(/\D/g, '');
+            if (value.length > 8) value = value.slice(0, 8);
+            if (value.length >= 5) {
+                value = value.replace(/^(\d{2})(\d{2})(\d{1,4})$/, '$1/$2/$3');
+            } else if (value.length >= 3) {
+                value = value.replace(/^(\d{2})(\d{1,2})$/, '$1/$2');
+            }
+            input.value = value;
+        }
+
+        function calculateDays(startStr, endStr) {
+            if (!/^\d{2}\/\d{2}\/\d{4}$/.test(startStr) || !/^\d{2}\/\d{2}\/\d{4}$/.test(endStr)) return null;
+
+            const [d1, m1, y1] = startStr.split('/').map(Number);
+            const [d2, m2, y2] = endStr.split('/').map(Number);
+
+            const startDate = new Date(y1, m1 - 1, d1);
+            const endDate = new Date(y2, m2 - 1, d2);
+
+            if (isNaN(startDate) || isNaN(endDate)) return null;
+
+            const diffTime = endDate - startDate;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+            return diffDays > 0 ? diffDays : null;
+        }
+
+        function updateParcelData(type, index, field, value) {
+            const list = type === 'orig' ? parcelsOrig : parcelsNova;
+            list[index][field] = value;
+
+            // Auto-calculate days if start/end are present
+            if (field === 'start' || field === 'end') {
+                const calculated = calculateDays(list[index].start, list[index].end);
+                if (calculated !== null) {
+                    list[index].days = calculated;
+                    renderParcels(); // Re-render to show calculated days
+                }
+            }
+
+            sumConfirmed = false; // Reset confirmation on any change
+            updatePreview();
+        }
+
+        function renderParcels() {
+            renderList('orig', parcelsOrig);
+            renderList('nova', parcelsNova);
+        }
+
+        function renderList(type, list) {
+            const container = document.getElementById(`parcels-${type}`);
+            container.innerHTML = '';
+            list.forEach((p, i) => {
+                const div = document.createElement('div');
+                div.className = 'parcel-row';
+                div.innerHTML = `
+                    <div style="font-weight:bold; color:var(--ufpe-blue)">${i + 1}ª</div>
+                    <div>
+                        <label style="font-size:0.7rem">Início</label>
+                        <input type="text" value="${p.start}" placeholder="DDMMYYYY" maxlength="10" 
+                            oninput="maskDate(this); updateParcelData('${type}', ${i}, 'start', this.value)">
+                    </div>
+                    <div>
+                        <label style="font-size:0.7rem">Fim</label>
+                        <input type="text" value="${p.end}" placeholder="DDMMYYYY" maxlength="10" 
+                            oninput="maskDate(this); updateParcelData('${type}', ${i}, 'end', this.value)">
+                    </div>
+                    <div>
+                        <label style="font-size:0.7rem">Dias</label>
+                        <input type="number" value="${p.days}" placeholder="00" 
+                            oninput="updateParcelData('${type}', ${i}, 'days', this.value)">
+                    </div>
+                    <div>
+                        ${list.length > 1 ? `<button class="btn-remove" onclick="removeParcel('${type}', ${i})">×</button>` : ''}
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function updatePreview() {
+            const nome = document.getElementById('input-nome').value || "[NOME DO SERVIDOR]";
+            const siape = document.getElementById('input-siape').value || "[SIAPE]";
+            const exercicio = document.getElementById('input-exercicio').value || "20XX";
+            const tipo = document.getElementById('select-tipo').value;
+            const motivo = document.getElementById('input-motivo').value || "[JUSTIFICATIVA]";
+
+            const sumOrig = parcelsOrig.reduce((sum, p) => sum + (parseInt(p.days) || 0), 0);
+            const sumNova = parcelsNova.reduce((sum, p) => sum + (parseInt(p.days) || 0), 0);
+
+            document.getElementById('total-orig').innerText = `Total: ${sumOrig} dias`;
+            document.getElementById('total-nova').innerText = `Total: ${sumNova} dias`;
+
+            const statusSoma = document.getElementById('status-soma');
+            if (tipo === 'alteracao' || tipo === 'interrupcao') {
+                if (sumOrig === sumNova && sumOrig > 0) {
+                    statusSoma.innerText = "✔ Soma OK";
+                    statusSoma.className = "status-badge status-ok";
+                } else if (sumOrig > 0 && sumNova > 0) {
+                    statusSoma.innerText = "⚠ Soma Diferente!";
+                    statusSoma.className = "status-badge status-error";
+                } else {
+                    statusSoma.innerText = "";
+                }
+            } else {
+                statusSoma.innerText = "";
+            }
+
+            let titulo = "";
+            if (tipo === 'alteracao') titulo = "Alteração de Programação de Férias";
+            if (tipo === 'cancelamento') titulo = "Cancelamento de Parcela de Férias";
+            if (tipo === 'interrupcao') titulo = "Interrupção de Férias por Necessidade do Serviço";
+            if (tipo === 'inclusao') titulo = "Inclusão Excepcional de Férias";
+
+            let content = "À Seção de Controle de Frequência - PROGEPE (11.07.24)\n\n";
+            content += `<b>Assunto:</b> ${titulo}\n\n`;
+
+            if (tipo === 'interrupcao') {
+                content += `Solicito a <b>interrupção de férias</b> do(a) servidor(a) <u>${nome}</u>, SIAPE <u>${siape}</u>, referentes ao exercício <b>${exercicio}</b>, em razão de ${motivo}.\n\n`;
+            } else {
+                content += `Solicito a <b>${tipo.replace('inclusao', 'inclusão').replace('alteracao', 'alteração')}</b> das férias do(a) servidor(a) <u>${nome}</u>, SIAPE <u>${siape}</u>, referentes ao exercício <b>${exercicio}</b>, em razão de ${motivo}.\n\n`;
+            }
+
+            content += "<b>PROGRAMAÇÃO ORIGINAL (SIGRH):</b>\n";
+            parcelsOrig.forEach((p, i) => {
+                content += `PARCELA: ${p.start || "XX/XX/XXXX"} A ${p.end || "XX/XX/XXXX"} (${p.days || "XX"} DIAS)\n`;
+            });
+
+            if (tipo !== 'cancelamento') {
+                content += "\n<b>NOVA PROGRAMAÇÃO PRETENDIDA / RESULTANTE:</b>\n";
+                parcelsNova.forEach((p, i) => {
+                    content += `PARCELA: ${p.start || "XX/XX/XXXX"} A ${p.end || "XX/XX/XXXX"} (${p.days || "XX"} DIAS)\n`;
+                });
+            }
+
+            content += "\nAtenciosamente,\n\n\n";
+            content += "__________________________________________\n";
+            content += "<b>Assinatura da Chefia Imediata / Autoridade Máxima</b>";
+
+            content += "\n\n<hr><u>Fundamentação Legal:</u><br>";
+            content += "<b>Instrução Normativa nº 003/2025-PROGEPE</b>:\n";
+            if (tipo === 'interrupcao') {
+                content += "<blockquote><b>Art. 12</b> - A interrupção de férias ocorre quando o servidor, no interesse da Administração, é convocado para retornar ao expediente durante o gozo da parcela de férias, por motivo de (...) necessidade do serviço declarada pelo dirigente de UORG.</blockquote>";
+            } else {
+                content += "<blockquote><b>Art. 11</b> - Alteração de férias é a modificação de parcela de férias anteriormente programada, sendo possível antecipar ou postergar.\n<b>Parágrafo único</b> - A solicitação deve ser realizada pelo servidor e homologada pela chefia imediata, respeitado o cronograma de folha de pagamentos...</blockquote>";
+            }
+
+            document.getElementById('preview-content').innerHTML = content.replace(/\n/g, '<br>');
+        }
+
+        async function copyToClipboard() {
+            const tipo = document.getElementById('select-tipo').value;
+            const sumOrig = parcelsOrig.reduce((sum, p) => sum + (parseInt(p.days) || 0), 0);
+            const sumNova = parcelsNova.reduce((sum, p) => sum + (parseInt(p.days) || 0), 0);
+
+            if ((tipo === 'alteracao' || tipo === 'interrupcao') && sumOrig !== sumNova && !sumConfirmed) {
+                if (confirm(`Atenção: O total de dias original (${sumOrig}) é diferente do pretendido (${sumNova}). Deseja prosseguir mesmo assim?`)) {
+                    sumConfirmed = true;
+                } else {
+                    return;
+                }
+            }
+
+            const preview = document.getElementById('preview-content');
+            const text = preview.innerText;
+            try {
+                await navigator.clipboard.writeText(text);
+                const btn = document.querySelector('.btn-copy');
+                const originalText = btn.innerHTML;
+                btn.innerHTML = "OFÍCIO COPIADO!";
+                btn.style.backgroundColor = "#28a745";
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                    btn.style.backgroundColor = "var(--ufpe-blue)";
+                }, 2000);
+            } catch (err) {
+                alert('Erro ao copiar: ' + err);
+            }
+        }
+
+        renderParcels();
+        updatePreview();
+    </script>
+</body>
+
+</html>
