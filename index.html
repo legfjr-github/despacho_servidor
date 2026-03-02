@@ -443,8 +443,10 @@
                 const remaining = daysOrig - enjoyed;
                 if (remaining > 0) {
                     parcelsNova[0].days = remaining;
+                    const inputDays = document.getElementById('input-nova-0-days');
+                    if (inputDays) inputDays.value = remaining;
+
                     autoCalculateEnd('nova', 0);
-                    renderParcels();
                     updatePreview();
                 }
             }
@@ -456,6 +458,8 @@
                 const end = calculateEndDate(list[index].start, list[index].days);
                 if (end) {
                     list[index].end = end;
+                    const inputEnd = document.getElementById(`input-${type}-${index}-end`);
+                    if (inputEnd) inputEnd.value = end;
                 }
             }
         }
@@ -469,6 +473,8 @@
                 const calculated = calculateDays(list[index].start, list[index].end);
                 if (calculated !== null) {
                     list[index].days = calculated;
+                    const inputDays = document.getElementById(`input-${type}-${index}-days`);
+                    if (inputDays) inputDays.value = calculated;
                 }
             }
 
@@ -477,7 +483,6 @@
                 autoCalculateEnd(type, index);
             }
 
-            renderParcels();
             sumConfirmed = false;
             updatePreview();
 
@@ -500,17 +505,17 @@
                     <div style="font-weight:bold; color:var(--ufpe-blue)">${i + 1}ª</div>
                     <div>
                         <label style="font-size:0.7rem">Início</label>
-                        <input type="text" value="${p.start}" placeholder="DDMMYYYY" maxlength="10" 
+                        <input type="text" id="input-${type}-${i}-start" value="${p.start}" placeholder="DDMMYYYY" maxlength="10" 
                             oninput="maskDate(this); updateParcelData('${type}', ${i}, 'start', this.value)">
                     </div>
                     <div>
                         <label style="font-size:0.7rem">Fim</label>
-                        <input type="text" value="${p.end}" placeholder="DDMMYYYY" maxlength="10" 
+                        <input type="text" id="input-${type}-${i}-end" value="${p.end}" placeholder="DDMMYYYY" maxlength="10" 
                             oninput="maskDate(this); updateParcelData('${type}', ${i}, 'end', this.value)">
                     </div>
                     <div>
                         <label style="font-size:0.7rem">Dias</label>
-                        <input type="number" value="${p.days}" placeholder="00" 
+                        <input type="number" id="input-${type}-${i}-days" value="${p.days}" placeholder="00" 
                             oninput="updateParcelData('${type}', ${i}, 'days', this.value)">
                     </div>
                     <div>
