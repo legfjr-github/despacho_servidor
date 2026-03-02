@@ -270,7 +270,7 @@
                     <h2>PROGEPE</h2>
                 </div>
             </div>
-            <div class="banner">Gerador de Ofício de Férias (Chefia)</div>
+            <div class="banner">Gerador de Ofício de Férias (Servidor)</div>
             <div class="content">
 
                 <div class="form-section">
@@ -306,6 +306,14 @@
                         <textarea id="input-motivo" rows="2"
                             placeholder="Ex: Necessidade do serviço / Interesse da Administração"
                             oninput="updatePreview()"></textarea>
+                    </div>
+                    <div id="group-interrupcao" class="form-group"
+                        style="display:none; background: #fffde7; padding: 10px; border-radius: 4px; border: 1px solid #ffd54f;">
+                        <label for="input-retorno">Data que retornou ao trabalho (Interrupção):</label>
+                        <input type="text" id="input-retorno" placeholder="DDMMYYYY" maxlength="10"
+                            oninput="maskDate(this); handleInterruptionMath()">
+                        <small style="color: #666; font-size: 0.75rem;">O sistema calculará o saldo automaticamente com
+                            base na 1ª parcela original.</small>
                     </div>
                 </div>
 
@@ -402,8 +410,49 @@
             if (isNaN(startDate) || isNaN(endDate)) return null;
 
             const diffTime = endDate - startDate;
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+            const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24)) + 1;
             return diffDays > 0 ? diffDays : null;
+        }
+
+        function calculateEndDate(startDateStr, days) {
+            if (!/^\d{2}\/\d{2}\/\d{4}$/.test(startDateStr) || !days) return null;
+            const [d, m, y] = startDateStr.split('/').map(Number);
+            const date = new Date(y, m - 1, d);
+            date.setDate(date.getDate() + parseInt(days) - 1);
+            const d2 = String(date.getDate()).padStart(2, '0');
+            const m2 = String(date.getMonth() + 1).padStart(2, '0');
+            const y2 = date.getFullYear();
+            return `${d2}/${m2}/${y2}`;
+        }
+
+        function handleInterruptionMath() {
+            const tipo = document.getElementById('select-tipo').value;
+            if (tipo !== 'interrupcao') return;
+
+            const startOrig = parcelsOrig[0].start;
+            const daysOrig = parseInt(parcelsOrig[0].days);
+            const dateRetorno = document.getElementById('input-retorno').value;
+
+            if (startOrig && daysOrig && /^\d{2}\/\d{2}\/\d{4}$/.test(dateRetorno)) {
+                const enjoyed = calculateDays(startOrig, dateRetorno) - 1;
+                const remaining = daysOrig - enjoyed;
+                if (remaining > 0) {
+                    parcelsNova[0].days = remaining;
+                    autoCalculateEnd('nova', 0);
+                    renderParcels();
+                    updatePreview();
+                }
+            }
+        }
+
+        function autoCalculateEnd(type, index) {
+            const list = type === 'orig' ? parcelsOrig : parcelsNova;
+            if (list[index].start && list[index].days) {
+                const end = calculateEndDate(list[index].start, list[index].days);
+                if (end) {
+                    list[index].end = end;
+                }
+            }
         }
 
         function updateParcelData(type, index, field, value) {
@@ -415,12 +464,20 @@
                 const calculated = calculateDays(list[index].start, list[index].end);
                 if (calculated !== null) {
                     list[index].days = calculated;
-                    renderParcels(); // Re-render to show calculated days
                 }
             }
 
-            sumConfirmed = false; // Reset confirmation on any change
+            // Auto-calculate end if start/days are present
+            if (field === 'days' || field === 'start') {
+                autoCalculateEnd(type, index);
+            }
+
+            renderParcels();
+            sumConfirmed = false;
             updatePreview();
+
+            // Trigger interruption math if start of 1st parcel changed
+            if (type === 'orig' && index === 0) handleInterruptionMath();
         }
 
         function renderParcels() {
@@ -473,6 +530,14 @@
             document.getElementById('total-nova').innerText = `Total: ${sumNova} dias`;
 
             const statusSoma = document.getElementById('status-soma');
+            const groupInterrupcao = document.getElementById('group-interrupcao');
+
+            if (tipo === 'interrupcao') {
+                groupInterrupcao.style.display = 'block';
+            } else {
+                groupInterrupcao.style.display = 'none';
+            }
+
             if (tipo === 'alteracao' || tipo === 'interrupcao') {
                 if (sumOrig === sumNova && sumOrig > 0) {
                     statusSoma.innerText = "✔ Soma OK";
