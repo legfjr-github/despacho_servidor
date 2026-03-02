@@ -312,7 +312,7 @@
                 <!-- PROGRAMAÇÃO ORIGINAL -->
                 <div class="form-section">
                     <div class="section-title">
-                        Programação Original (SIGRH)
+                        Programação Original
                         <span id="total-orig" class="total-badge">Total: 0 dias</span>
                     </div>
                     <div id="parcels-orig">
@@ -578,7 +578,7 @@
                 content += `Solicito a <b>${tipo.replace('inclusao', 'inclusão').replace('alteracao', 'alteração')}</b> das férias do(a) servidor(a) <u>${nome}</u>, SIAPE <u>${siape}</u>, referentes ao exercício <b>${exercicio}</b>, em razão de ${motivo}.\n\n`;
             }
 
-            content += "<b>PROGRAMAÇÃO ORIGINAL (SIGRH):</b>\n";
+            content += "<b>PROGRAMAÇÃO ORIGINAL:</b>\n";
             parcelsOrig.forEach((p, i) => {
                 content += `PARCELA: ${p.start || "XX/XX/XXXX"} A ${p.end || "XX/XX/XXXX"} (${p.days || "XX"} DIAS)\n`;
             });
@@ -651,3 +651,4 @@
 </body>
 
 </html>
+
