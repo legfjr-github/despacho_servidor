@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gerador de Ofício de Férias (Chefia) - PROGEPE UFPE</title>
+    <title>Gerador de Ofício de Férias (Servidor) - PROGEPE UFPE</title>
     <style>
         :root {
             --ufpe-blue: #003b71;
@@ -498,6 +498,7 @@
 
             if (tipo === 'interrupcao') {
                 content += `Solicito a <b>interrupção de férias</b> do(a) servidor(a) <u>${nome}</u>, SIAPE <u>${siape}</u>, referentes ao exercício <b>${exercicio}</b>, em razão de ${motivo}.\n\n`;
+                content += "<b>OBSERVAÇÃO IMPORTANTE:</b> A interrupção por necessidade do serviço deve ser assinada obrigatoriamente pela <b>Autoridade Máxima da Unidade</b> (Reitor, Diretores de Centro ou Superintendentes), sob pena de não atendimento da solicitação.\n\n";
             } else {
                 content += `Solicito a <b>${tipo.replace('inclusao', 'inclusão').replace('alteracao', 'alteração')}</b> das férias do(a) servidor(a) <u>${nome}</u>, SIAPE <u>${siape}</u>, referentes ao exercício <b>${exercicio}</b>, em razão de ${motivo}.\n\n`;
             }
@@ -515,8 +516,6 @@
             }
 
             content += "\nAtenciosamente,\n";
-            // content += "__________________________________________\n";
-            // content += "<b>Assinatura da Chefia Imediata / Autoridade Máxima</b>";
 
             content += "\n\n<hr><u>Fundamentação Legal:</u><br>";
             content += "<b>Instrução Normativa nº 003/2025-PROGEPE</b>:\n";
